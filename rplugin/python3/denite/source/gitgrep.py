@@ -18,6 +18,7 @@ class Source(Base):
         super().__init__(vim)
         self.vim = vim
         self.name = 'git-grep'
+        self.kind = 'gitgrep_kind'
 
     def on_init(self, context):
         pass
