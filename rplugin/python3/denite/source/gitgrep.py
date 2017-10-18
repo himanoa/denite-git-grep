@@ -2,7 +2,7 @@
 
 from .base import Base
 import subprocess
-
+import re
 
 def run_command(command, cwd, encode='utf8'):
     process = subprocess.run(command,
@@ -18,7 +18,7 @@ class Source(Base):
         super().__init__(vim)
         self.vim = vim
         self.name = 'git-grep'
-        self.kind = 'gitgrep_kind'
+        self.kind = 'file'
 
     def on_init(self, context):
         pass
@@ -36,4 +36,27 @@ class Source(Base):
                 ' '.join(context['args'][1::]),
                 '--',
                 context['args'][0]] if len(x) != 0]
-        return [{'word': word} for word in run_command(args, self.vim.eval('getcwd()'))]
+        return [self.__candidate(x) for x in run_command(args, self.vim.eval('getcwd()'))]
+
+    def __candidate(self, line):
+        try:
+            regex = re.compile("\:\d+\:")
+            path = regex.split(line)[0]
+            body = line.split(':')[2::]
+            row = regex.search(line)[0].strip(':')
+
+            return {
+                'word': body,
+                "abbr": '{0}:{1}{2} {3}'.format(
+                    path,
+                    row,
+                    '',
+                    body
+                ),
+                'action__path': path,
+                'action__line': int(row),
+                'action__col': 0,
+                'action__text': body
+            }
+        except TypeError:
+            return {"word": ''}
