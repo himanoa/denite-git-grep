@@ -4,6 +4,7 @@ from .base import Base
 import subprocess
 import re
 
+
 def run_command(command, cwd, encode='utf8'):
     process = subprocess.run(command,
                              cwd=cwd,
@@ -18,7 +19,7 @@ class Source(Base):
         super().__init__(vim)
         self.vim = vim
         self.name = 'git-grep'
-        self.kind= 'file'
+        self.kind = 'file'
 
     def on_init(self, context):
         pass
@@ -29,13 +30,13 @@ class Source(Base):
     def gather_candidates(self, context):
         # command: git --no-pager grep -n --no-color
         args = [x for x in ['git',
-                '--no-pager',
-                'grep',
-                '-n',
-                '--no-color',
-                ' '.join(context['args'][1::]),
-                '--',
-                context['args'][0]] if len(x) != 0]
+                            '--no-pager',
+                            'grep',
+                            '-n',
+                            '--no-color',
+                            ' '.join(context['args'][1::]),
+                            '--',
+                            context['args'][0]] if len(x) != 0]
         return [self.__candidate(x) for x in run_command(args, self.vim.eval('getcwd()')) if self.__candidate(x) is not None]
 
     def __candidate(self, line):
