@@ -43,7 +43,7 @@ class Source(Base):
         try:
             regex = re.compile("\:\d+\:")
             path = regex.split(line)[0]
-            body = line.split(':')[2::]
+            body = ''.join(line.split(':')[2::])
             row = regex.search(line)[0].strip(':')
 
             return {
