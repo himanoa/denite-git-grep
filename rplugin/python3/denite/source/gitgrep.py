@@ -18,7 +18,7 @@ class Source(Base):
         super().__init__(vim)
         self.vim = vim
         self.name = 'git-grep'
-        self.kind = 'file'
+        self.kind= 'file'
 
     def on_init(self, context):
         pass
@@ -36,7 +36,7 @@ class Source(Base):
                 ' '.join(context['args'][1::]),
                 '--',
                 context['args'][0]] if len(x) != 0]
-        return [self.__candidate(x) for x in run_command(args, self.vim.eval('getcwd()'))]
+        return [self.__candidate(x) for x in run_command(args, self.vim.eval('getcwd()')) if self.__candidate(x) is not None]
 
     def __candidate(self, line):
         try:
@@ -46,11 +46,10 @@ class Source(Base):
             row = regex.search(line)[0].strip(':')
 
             return {
-                'word': body,
-                "abbr": '{0}:{1}{2} {3}'.format(
+                'word': line,
+                "abbr": '{0}:{1}: {2}'.format(
                     path,
                     row,
-                    '',
                     body
                 ),
                 'action__path': path,
@@ -59,4 +58,4 @@ class Source(Base):
                 'action__text': body
             }
         except TypeError:
-            return {"word": ''}
+            return None
