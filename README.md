@@ -1,4 +1,4 @@
-# Denite-gitgrep
+# Denite-git-grep
 
 denite source for using git grep command
 
